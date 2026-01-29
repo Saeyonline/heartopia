@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>두근두근타운 할일 체크리스트</title>
+  <style>
+    :root{
+      --bg:#fff2f7; /* soft pink background */
+      --card:#ffffff; /* white card */
+      --muted:#8b6f7d; /* warm muted */
+      --text:#3b2b33; /* soft dark text */
+      --accent:#ff9acb; /* cute pink accent */
+      --accent2:#ffd1e6; /* pastel pink */
+      --danger:#ff7fa6;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --pad:18px;
+      --gap:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(122,167,255,.25), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(124,246,201,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px 16px 60px;
+    }
+    .wrap{
+      width:min(820px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 18px 6px;
+    }
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:-.2px;
+      line-height:1.2;
+    }
+    .subtitle{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+      white-space:nowrap;
+      font-size:12.5px;
+      color:var(--text);
+      user-select:none;
+    }
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:linear-gradient(135deg, var(--accent2), var(--accent));
+      box-shadow:0 0 0 4px rgba(124,246,201,.10);
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px var(--pad);
+      border-bottom:1px solid var(--border);
+      background:rgba(0,0,0,.12);
+    }
+
+    .stats{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .progress{
+      width:160px;
+      height:8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius:999px;
+      transition:width .18s ease;
+    }
+
+    .btns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    button{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease;
+    }
+    button:hover{ background:rgba(255,255,255,.07); }
+    button:active{ transform:translateY(1px); }
+    button.danger{ border-color:rgba(255,122,144,.35); }
+    button.danger:hover{ background:rgba(255,122,144,.10); }
+
+    ul{
+      list-style:none;
+      margin:0;
+      padding:10px var(--pad) 18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      background:rgba(0,0,0,.10);
+    }
+
+    .item input[type="checkbox"]{
+      width:22px;
+      height:22px;
+      accent-color: var(--accent);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .label{
+      flex:1 1 auto;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .title{
+      font-size:15px;
+      line-height:1.25;
+      letter-spacing:-.1px;
+    }
+
+    .meta{
+      font-size:12.5px;
+      color:var(--muted);
+    }
+
+    .item.done{
+      opacity:.88;
+      border-color:rgba(124,246,201,.25);
+      background:rgba(124,246,201,.06);
+    }
+    .item.done .title{
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: rgba(124,246,201,.55);
+      color: rgba(234,240,255,.82);
+    }
+
+    footer{
+      color:var(--muted);
+      font-size:12.5px;
+      padding:0 18px;
+      line-height:1.6;
+    }
+
+    @media (max-width:520px){
+      .progress{ width:120px; }
+      header{ padding:16px 14px 6px; }
+      .toolbar{ padding:12px 14px; }
+      ul{ padding:10px 14px 16px; }
+      footer{ padding:0 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>두근두근타운 할일 체크리스트</h1>
+        <div class="subtitle">매일 <b>한국시간 06:00</b>에 자동 초기화됩니다.</div>
+      </div>
+      <div class="pill" title="다음 초기화까지 남은 시간">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="countdown">초기화 계산 중…</span>
+      </div>
+    </header>
+
+    <section class="card" aria-label="체크리스트">
+      <div class="toolbar">
+        <div class="stats">
+          <div><b id="doneCount">0</b>/<span id="totalCount">0</span> 완료</div>
+          <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+        </div>
+        <div class="btns">
+          <button id="checkAll" type="button">전부 체크</button>
+          <button id="uncheckAll" type="button">전부 해제</button>
+          <button id="resetNow" class="danger" type="button">지금 초기화</button>
+        </div>
+      </div>
+
+      <ul id="list"></ul>
+    </section>
+
+    <footer>
+      <div>✔ 체크 상태는 이 브라우저에 저장됩니다(localStorage).</div>
+      <div>⚠ PC 시간대가 한국이 아니어도, <b>Asia/Seoul</b>(한국시간) 기준으로 06:00 초기화가 적용됩니다.</div>
+    </footer>
+  </div>
+
+  <script>
+    // ===== 설정 =====
+    const TIME_ZONE = "Asia/Seoul";
+    const RESET_HOUR = 6; // 06:00 KST
+
+    const TASKS = [
+      { id: "t1", title: "형광석/참나무 캐기" },
+      { id: "t2", title: "계란/우유/원두/치즈/세일 품목 구매" },
+      { id: "t3", title: "의상/가구/펫 확인" },
+      { id: "t4", title: "일일퀘스트" },
+      { id: "t5", title: "카칭 퍼즐 확인" },
+      { id: "t6", title: "펫 밥주기/놀아주기" },
+      { id: "t7", title: "동물 밥주기(낮)" },
+      { id: "t8", title: "동물 밥주기(밤)" },
+      { id: "t9", title: "출석체크" },
+    ];
+
+    // ===== 유틸: 한국시간(KST) 기준 '현재'와 날짜/시간 계산 =====
+    const dtfParts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+
+    function getKstParts(date = new Date()) {
+      // en-CA는 YYYY-MM-DD 형태라 다루기 편함
+      const parts = dtfParts.formatToParts(date);
+      const map = Object.fromEntries(parts.filter(p => p.type !== "literal").map(p => [p.type, p.value]));
+      return {
+        y: Number(map.year),
+        m: Number(map.month),
+        d: Number(map.day),
+        hh: Number(map.hour),
+        mm: Number(map.minute),
+        ss: Number(map.second),
+        ymd: `${map.year}-${map.month}-${map.day}`
+      };
+    }
+
+    function addDaysYMD(ymd, deltaDays) {
+      // ymd: YYYY-MM-DD (KST 기준 날짜 문자열)
+      const [y, m, d] = ymd.split("-").map(Number);
+      // UTC로 안전하게 연산(날짜만)
+      const utc = new Date(Date.UTC(y, m - 1, d));
+      utc.setUTCDate(utc.getUTCDate() + deltaDays);
+      const yy = utc.getUTCFullYear();
+      const mm = String(utc.getUTCMonth() + 1).padStart(2, "0");
+      const dd = String(utc.getUTCDate()).padStart(2, "0");
+      return `${yy}-${mm}-${dd}`;
+    }
+
+    // '체크리스트 사이클' 식별자: 매일 06:00~익일 05:59를 같은 하루로 묶음
+    function getCycleKey(now = new Date()) {
+      const p = getKstParts(now);
+      const cycleYmd = (p.hh < RESET_HOUR) ? addDaysYMD(p.ymd, -1) : p.ymd;
+      return cycleYmd; // YYYY-MM-DD
+    }
+
+    // 다음 초기화(06:00 KST)까지 남은 시간 계산
+    function getMsUntilNextReset(now = new Date()) {
+      const p = getKstParts(now);
+      // 다음 06:00은: 현재 시간이 06:00 이전이면 오늘 06:00, 아니면 내일 06:00
+      const targetYmd = (p.hh < RESET_HOUR || (p.hh === RESET_HOUR && p.mm === 0 && p.ss === 0))
+        ? p.ymd
+        : addDaysYMD(p.ymd, 1);
+
+      // targetYmd의 06:00(KST)을 "현재 브라우저" 시간으로 정확히 만들기 위해
+      // Intl로 KST 기준 오프셋을 직접 구하는 방식 대신, 비교적 안전한 방법:
+      // 1) targetYmd를 KST의 "벽시계"로 간주한 문자열을 만들고
+      // 2) 그 순간의 UTC 타임스탬프를 얻기 위해 timeZoneName: 'shortOffset'을 사용
+      const offsetFmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: TIME_ZONE,
+        timeZoneName: "shortOffset",
+        hour: "2-digit",
+        hour12: false
+      });
+
+      // targetYmd 06:00:00을 임의의 Date로 만들고, 그 Date가 KST에서 어떤 오프셋인지 얻어 UTC로 보정
+      // 아래 방식은 "목표 KST 시각"을 정확히 만들기 위한 실용적 접근입니다.
+      const [yy, mm, dd] = targetYmd.split("-");
+      // 먼저 UTC 기준으로 같은 날짜/시간을 만들어 둔 뒤(임시)
+      const approx = new Date(Date.UTC(Number(yy), Number(mm) - 1, Number(dd), RESET_HOUR, 0, 0));
+      // approx가 KST로 표시될 때의 오프셋을 얻어, 목표 KST 06:00의 실제 UTC를 계산
+      const parts = offsetFmt.formatToParts(approx);
+      const tzPart = parts.find(p2 => p2.type === "timeZoneName")?.value || "GMT+9";
+      // tzPart 예: "GMT+9" or "GMT+09:00"
+      const mOffset = tzPart.match(/GMT([+-])(\d{1,2})(?::?(\d{2}))?/);
+      let offsetMin = 540; // 기본 +09:00
+      if (mOffset) {
+        const sign = mOffset[1] === "-" ? -1 : 1;
+        const hh = Number(mOffset[2] || 0);
+        const mi = Number(mOffset[3] || 0);
+        offsetMin = sign * (hh * 60 + mi);
+      }
+      // 목표 KST 06:00의 UTC = (벽시계 06:00) - offset
+      const targetUtcMs = Date.UTC(Number(yy), Number(mm) - 1, Number(dd), RESET_HOUR, 0, 0) - offsetMin * 60_000;
+
+      return Math.max(0, targetUtcMs - now.getTime());
+    }
+
+    function formatDuration(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    // ===== 저장/로드 =====
+    const LS_KEY = "ddtown_checklist_v1";
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return { cycleKey: null, checks: {} };
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return { cycleKey: null, checks: {} };
+        return {
+          cycleKey: typeof parsed.cycleKey === "string" ? parsed.cycleKey : null,
+          checks: (parsed.checks && typeof parsed.checks === "object") ? parsed.checks : {}
+        };
+      } catch {
+        return { cycleKey: null, checks: {} };
+      }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    function clearChecks(state) {
+      state.checks = {};
+      saveState(state);
+    }
+
+    // ===== 렌더 =====
+    const els = {
+      list: document.getElementById("list"),
+      doneCount: document.getElementById("doneCount"),
+      totalCount: document.getElementById("totalCount"),
+      bar: document.getElementById("bar"),
+      countdown: document.getElementById("countdown"),
+      checkAll: document.getElementById("checkAll"),
+      uncheckAll: document.getElementById("uncheckAll"),
+      resetNow: document.getElementById("resetNow"),
+    };
+
+    function render(state) {
+      els.list.innerHTML = "";
+      let done = 0;
+      const total = TASKS.length;
+
+      for (const t of TASKS) {
+        const checked = !!state.checks[t.id];
+        if (checked) done++;
+
+        const li = document.createElement("li");
+        li.className = "item" + (checked ? " done" : "");
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = checked;
+        cb.id = t.id;
+        cb.addEventListener("change", () => {
+          state.checks[t.id] = cb.checked;
+          saveState(state);
+          render(state);
+        });
+
+        const label = document.createElement("label");
+        label.className = "label";
+        label.setAttribute("for", t.id);
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = t.title;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = "매일 할 일";
+
+        label.appendChild(title);
+        label.appendChild(meta);
+
+        li.appendChild(cb);
+        li.appendChild(label);
+        els.list.appendChild(li);
+      }
+
+      els.doneCount.textContent = String(done);
+      els.totalCount.textContent = String(total);
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      els.bar.style.width = `${pct}%`;
+    }
+
+    // ===== 자동 초기화 로직 =====
+    function ensureCycle(state) {
+      const currentCycle = getCycleKey(new Date());
+      if (state.cycleKey !== currentCycle) {
+        state.cycleKey = currentCycle;
+        state.checks = {};
+        saveState(state);
+      }
+    }
+
+    function updateCountdown() {
+      const ms = getMsUntilNextReset(new Date());
+      els.countdown.textContent = `다음 초기화까지 ${formatDuration(ms)}`;
+    }
+
+    // ===== 초기화/버튼 =====
+    function setAll(state, value) {
+      for (const t of TASKS) state.checks[t.id] = value;
+      saveState(state);
+      render(state);
+    }
+
+    function manualReset(state) {
+      // 수동 초기화는 "현재 사이클" 유지한 채 체크만 비움
+      clearChecks(state);
+      render(state);
+    }
+
+    // ===== 시작 =====
+    const state = loadState();
+    ensureCycle(state);
+    render(state);
+    updateCountdown();
+
+    // 1초마다 카운트다운 갱신
+    setInterval(updateCountdown, 1000);
+
+    // 20초마다 사이클 확인(06:00 경계 대응)
+    setInterval(() => {
+      const before = state.cycleKey;
+      ensureCycle(state);
+      if (state.cycleKey !== before) render(state);
+    }, 20_000);
+
+    els.checkAll.addEventListener("click", () => setAll(state, true));
+    els.uncheckAll.addEventListener("click", () => setAll(state, false));
+    els.resetNow.addEventListener("click", () => manualReset(state));
+  </script>
+</body>
+</html>
